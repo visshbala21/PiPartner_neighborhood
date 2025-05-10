@@ -2,7 +2,7 @@ export type RootStackParamList = {
     Welcome: undefined;
     Home: {
         problem?: string;
-        image?: string;
+        image: string | null;
         explanation?: string;
         isFromHistory ?: boolean;
     };
