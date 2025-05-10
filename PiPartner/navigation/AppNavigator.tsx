@@ -2,10 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import WelcomeScreen from '../screens/WelcomeScreen';
-import HomeScreen from '../screens/HomeScreen';
-import ChatHistoryScreen from '../screens/ChatHistoryScreen';
-import { THEME } from '../theme';
+import WelcomeScreen from '../components/ui/WelcomeScreen';
+import HomeScreen from '../components/ui/HomeScreen';
+import ChatHistoryScreen from '../components/ui/ChatHistoryScreen';
+import { THEME } from '../constants/Colors';
 import { RootStackParamList } from './types';
 
 const Stack = createStackNavigator<RootStackParamList>();
