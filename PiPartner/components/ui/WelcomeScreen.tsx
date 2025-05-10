@@ -59,6 +59,12 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
         }
       };
     const handleImageUpload = () => {
+        try {
+            const 
+        }
+    };
+
+    const navigateToChatHistory = () => {
 
     };
 
@@ -135,17 +141,32 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                         disabled={!query.trim() && !selectedImage}
                     >
                         <Ionicons
-                        name="send"
-                        size={28}
-                        color={(query.trim() || selectedImage) ? THEME.PURPLE : '#555'}
+                            name="send"
+                            size={28}
+                            color={(query.trim() || selectedImage) ? THEME.PURPLE : '#555'}
                         />
                     </TouchableOpacity>
                 </View>
             </View>
 
+            {/* Dropdown Menu */}
+            {menuVisible && (
+                <Animated.View
+                style={[
+                    styles.menuContainer,
+                    { opacity: fadeAnim}
+                ]}
+                >
+                    <TouchableOpacity
+                        style={styles.menuItem}
+                        onPress={navigateToChatHistory}
+                    >
+                        <Ionicons name="time-outline" size={20} color={THEME.PURPLE} />
+                        <Text style={styles.menuText}>Chat History</Text>
+                    </TouchableOpacity>
 
-
-                
+                </Animated.View>
+            )}                
             </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     );
@@ -155,13 +176,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: THEME.BLACK,
-        alignItems: 'center',
-        justifyContent: 'center',
+        padding: 16,
     },
     title: {
-        fontSize: 24,
-        color: THEME.PURPLE,
+        fontSize: 32,
         fontWeight: 'bold',
+        color: THEME.WHITE,
+        textAlign: 'center',
+        marginBottom: 24,
     },
     header: {
         flexDirection: 'row',
@@ -169,33 +191,98 @@ const styles = StyleSheet.create({
         marginTop: Platform.OS === 'ios' ? 50 : 20,
     },
     menuButton: {
-        
+        padding: 8,
     },
     titleContainer: {
-        
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     input: {
-
+        fontSize: 16,
+        color: THEME.WHITE,
+        padding: 12, 
+        textAlign: 'left',
+        minHeight: 40,
+        textAlignVertical: 'center',
     },
     inputContainer: {
-
+        marginBottom: 40,
+        backgroundColor: THEME.DARK_GRAY,
+        borderRadius: 20,
+        overflow: 'hidden',
+        elevation: 2,
+        shadowColor: THEME.BLACK,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        borderWidth: 1,
+        borderColor: THEME.PURPLE,
+        width: '98%',
+        alignSelf: 'center',
     },
     buttonRow: {
-
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 2,
+        paddingHorizontal: 12,
+        borderTopWidth: 1,
+        borderTopColor: THEME.MEDIUM_GRAY,
     },
     smallImagePreviewContainer: {
-
+        width: 40, 
+        height: 40,
+        borderRadius: 8,
+        overflow: 'hidden',
+        position: 'relative',
+        marginRight: 8,
     },
     smallImagePreview: {
-
+        width: '100%',
+        height: '100%',
     },
     removeImageButtonSmall: {
-        
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 8,
+        padding: 2,
     },
     button: {
-
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 6,
     },
     sendButton: {
-        
-    }
+        marginLeft: 'auto',
+    },
+    menuContainer: {
+        position: 'absolute',
+        top: Platform.OS === 'ios' ? 90 : 60,
+        right: 16,
+        backgroundColor: THEME.DARK_GRAY,
+        borderRadius: 8,
+        padding: 8,
+        minWidth: 150,
+        zIndex: 10,
+        elevation: 5,
+        shadowColor: THEME.BLACK,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        borderWidth: 1,
+        borderColor: THEME.PURPLE,
+    },
+    menuItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
+    menuText: {
+        color: THEME.PURPLE,
+        marginLeft: 10,
+        fontSize: 16,
+    },
 });
