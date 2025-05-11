@@ -15,7 +15,7 @@ import {
     Image,
  } from 'react-native';
 import { THEME } from '../../constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';  
 import * as ImagePicker from 'expo-image-picker';
 import { RootStackParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -25,7 +25,6 @@ type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Welc
 interface WelcomeScreenProps {
     navigation: WelcomeScreenNavigationProp;
 }
-
 
 
 export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
@@ -58,15 +57,38 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
           });
         }
       };
-    const handleImageUpload = () => {
+    const handleImageUpload = async () => {
         try {
-            const 
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if (status !== 'granted') {
+                Alert.alert('Permission needed', 'Please grand cameral roll permissions to upload an image');
+                return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4,3],
+                quality: 0.8,
+                base64: true,
+            });
+
+            if (!result.canceled && result.assets && result.assets[0].base64) {
+                setSelectedImage(result.assets[0].base64);
+                setProblem('');
+                Alert.alert('Sucess', 'Image uploaded sucessfully! tap to submit to continue. ');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            Alert.alert('Error', 'Failed to upload image: ' + (error instanceof Error ? error.message : String(error)));
         }
     };
 
     const navigateToChatHistory = () => {
-
-    };
+        setMenuVisible(false);
+        navigation.navigate('ChatHistory');
+      };
 
     return (
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -82,7 +104,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                     style={styles.menuButton}
                     onPress={toggleMenu}
                     >
-                        <Ionicons name="ellipsis-vertical" size={24} color={THEME.PURPLE}/>
+                        <Text style={{fontSize: 24, color: THEME.PURPLE}}>⋮</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -119,7 +141,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                                     style={styles.removeImageButtonSmall}
                                     onPress={() => setSelectedImage(null)}
                                 >
-                                    <Ionicons name="close-circle" size={16} color={THEME.PURPLE} />
+                                    <Text style={{fontSize: 16, color: THEME.PURPLE}}>×</Text>
                                 </TouchableOpacity>
                                 </View>
                         ) : (
@@ -127,7 +149,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                                 style={styles.button}
                                 onPress={handleImageUpload}
                             >
-                                <Ionicons name="add" size={20} color={THEME.PURPLE} />
+                                <Text style={{fontSize: 20, color: THEME.PURPLE}}>+</Text>
                           </TouchableOpacity>
                         )}
 
@@ -140,11 +162,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                         }}
                         disabled={!query.trim() && !selectedImage}
                     >
-                        <Ionicons
-                            name="send"
-                            size={28}
-                            color={(query.trim() || selectedImage) ? THEME.PURPLE : '#555'}
-                        />
+                        <Text style={{fontSize: 28, color: (query.trim() || selectedImage) ? THEME.PURPLE : '#555'}}>→</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -161,7 +179,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                         style={styles.menuItem}
                         onPress={navigateToChatHistory}
                     >
-                        <Ionicons name="time-outline" size={20} color={THEME.PURPLE} />
+                        <Text style={{fontSize: 20, color: THEME.PURPLE}}>⏱</Text>
                         <Text style={styles.menuText}>Chat History</Text>
                     </TouchableOpacity>
 

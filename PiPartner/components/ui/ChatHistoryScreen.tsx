@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     timestamp: {
-        color: THEME.LIGHT_GRAY,
+        color: THEME.MEDIUM_GRAY,
         fontSize: 12,
     },
 });
