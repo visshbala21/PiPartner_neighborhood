@@ -72,11 +72,63 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
         loadConversationContext();
     }, []);
 
+
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Home Screen</Text>
-            <Text style={styles.subtitle}>Chat History Items: {chatHistory.length}</Text>
-        </View>
+       <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64: 0}
+        >
+            <TouchableOpacity
+                style={styles.clockButton}
+                onPress={() => navigation.navigate('ChatHistory')}
+                disabled={isLoading}
+            >
+                <Ionicons name="time-outline" size={28} color={THEME.PURPLE} />
+            </TouchableOpacity>
+            <ScrollView 
+                style={styles.scrollView}
+                contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+            >
+                {problem && !selectedImage ? (
+                    <View style={styles.imagePreiewContainer}>
+                        <Text style={styles.problem}>Problem: {problem}</Text>
+                    </View>
+                ): null}
+
+                {selectedImage ? (
+                    <View style={styles.imagePreiewContainer}>
+                        <Image 
+                            source={{ uri: `data:image/jpeg;base64,${selectedImage}` }}
+                            style={styles.imagePreview}
+                            resizeMode="contain"
+                        />
+                        <TouchableOpacity
+                            style={styles.removeImageButton}
+                            onPress={() => setSelectedImage(null)}
+                        >
+                            <Ionicons name="close-circle" size={24} color={THEME.PURPLE}/>
+                        </TouchableOpacity>
+                    </View>
+                ) : null} 
+
+                {response ? (
+                    <View style={styles.responseCard}>
+                        <MathJaxRenderer
+                            content={response}
+                            style={styles.mathRenderer}
+                        />
+                    </View>
+                ): null}
+
+                {isLoading && (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={THEME.PURPLE}/>
+                    </View>
+                )}
+            </ScrollView>
+
+        </KeyboardAvoidingView>
     );
 }
 
@@ -97,4 +149,31 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: THEME.WHITE,
     },
+    clockButton: {
+
+    },
+    scrollView: {
+
+    },
+    imagePreiewContainer: {
+
+    },
+    problem: {
+
+    },
+    imagePreview: {
+
+    },
+    removeImageButton: {
+        
+    },
+    responseCard: {
+
+    },
+    mathRenderer: {
+
+    },
+    loadingContainer: {
+        
+    }
 });
