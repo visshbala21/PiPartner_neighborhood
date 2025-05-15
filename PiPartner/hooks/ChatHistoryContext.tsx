@@ -26,10 +26,25 @@ export const useChatHistory = () => {
 
 export const ChatHistoryProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([]);
+    const [storageAvailable, setStorageAvailable] = useState(true);
 
     useEffect(() => {
-        loadChatHistory();
+        checkStorageAndLoadHistory();
     }, []);
+    
+    const checkStorageAndLoadHistory = async () => {
+        try {
+            // Test if AsyncStorage is available
+            await AsyncStorage.setItem('storage_test', 'test');
+            await AsyncStorage.removeItem('storage_test');
+            
+            // If we got here, AsyncStorage is working
+            loadChatHistory();
+        } catch (error) {
+            console.warn('AsyncStorage not available:', error);
+            setStorageAvailable(false);
+        }
+    };
     
     const loadChatHistory = async () => {
         try {
@@ -37,8 +52,8 @@ export const ChatHistoryProvider: React.FC<{ children: React.ReactNode }> = ({ch
             if (history) {
                 setChatHistory(JSON.parse(history));
             }
-        }catch (error) {
-            console.error('Error loading chat histoty:', error);
+        } catch (error) {
+            console.warn('Error loading chat history:', error);
         }
     };
 
@@ -52,19 +67,25 @@ export const ChatHistoryProvider: React.FC<{ children: React.ReactNode }> = ({ch
         const updatedHistory = [newItem, ...chatHistory];
         setChatHistory(updatedHistory);
 
-        try{
-            await AsyncStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
-        }catch (error) {
-            console.error('Error saving chat history:', error);
+        if (storageAvailable) {
+            try {
+                await AsyncStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+            } catch (error) {
+                console.warn('Error saving chat history:', error);
+                setStorageAvailable(false);
+            }
         }
     };
 
     const clearChatHistory = async () => {
         setChatHistory([]);
-        try {
-            await AsyncStorage.removeItem('chatHistory');
-        }catch (error) {
-            console.error('Error clearing chat history: ', error);
+        if (storageAvailable) {
+            try {
+                await AsyncStorage.removeItem('chatHistory');
+            } catch (error) {
+                console.warn('Error clearing chat history:', error);
+                setStorageAvailable(false);
+            }
         }
     };
 
@@ -72,5 +93,5 @@ export const ChatHistoryProvider: React.FC<{ children: React.ReactNode }> = ({ch
         <ChatHistoryContext.Provider value={{chatHistory, addChatHistory, clearChatHistory}}>
             {children}
         </ChatHistoryContext.Provider>
-    )
+    );
 }

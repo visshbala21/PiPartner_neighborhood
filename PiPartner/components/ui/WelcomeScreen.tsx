@@ -15,10 +15,12 @@ import {
     Image,
  } from 'react-native';
 import { THEME } from '../../constants/Colors';
-import { Ionicons } from '@expo/vector-icons';  
+import Ionicons from '@expo/vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 import { RootStackParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
+import TestIcons from './TestIcons';
+import IconDebug from './IconDebug';
 
 type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Welcome'>
 
@@ -104,13 +106,17 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                     style={styles.menuButton}
                     onPress={toggleMenu}
                     >
-                        <Text style={{fontSize: 24, color: THEME.PURPLE}}>⋮</Text>
+                        <Ionicons name="menu" size={24} color={THEME.PURPLE} />
                     </TouchableOpacity>
                 </View>
 
                 {/*Title*/}
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>What can I help with?</Text>
+                    
+                    {/* Add the test icons component */}
+                    <TestIcons />
+                    <IconDebug />
                 </View>
 
                 {/*Search Input*/}
@@ -141,7 +147,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                                     style={styles.removeImageButtonSmall}
                                     onPress={() => setSelectedImage(null)}
                                 >
-                                    <Text style={{fontSize: 16, color: THEME.PURPLE}}>×</Text>
+                                    <Ionicons name="close" size={16} color={THEME.PURPLE} />
                                 </TouchableOpacity>
                                 </View>
                         ) : (
@@ -149,7 +155,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                                 style={styles.button}
                                 onPress={handleImageUpload}
                             >
-                                <Text style={{fontSize: 20, color: THEME.PURPLE}}>+</Text>
+                                <Ionicons name="add" size={20} color={THEME.PURPLE} />
                           </TouchableOpacity>
                         )}
 
@@ -162,7 +168,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                         }}
                         disabled={!query.trim() && !selectedImage}
                     >
-                        <Text style={{fontSize: 28, color: (query.trim() || selectedImage) ? THEME.PURPLE : '#555'}}>→</Text>
+                        <Ionicons name="arrow-forward" size={28} color={(query.trim() || selectedImage) ? THEME.PURPLE : '#555'} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -179,7 +185,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                         style={styles.menuItem}
                         onPress={navigateToChatHistory}
                     >
-                        <Text style={{fontSize: 20, color: THEME.PURPLE}}>⏱</Text>
+                        <Ionicons name="time-outline" size={20} color={THEME.PURPLE} />
                         <Text style={styles.menuText}>Chat History</Text>
                     </TouchableOpacity>
 

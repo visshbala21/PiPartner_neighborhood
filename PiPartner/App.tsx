@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import { ChatHistoryProvider } from '../../hooks/ChatHistoryContext';
-import WelcomeScreen from '../../components/ui/WelcomeScreen';
-import HomeScreen from '../../components/ui/HomeScreen';
-import ChatHistoryScreen from '../../components/ui/ChatHistoryScreen';
-import { THEME } from '../../constants/Colors';
-import { StyleSheet } from 'react-native';
-import { RootStackParamList } from '../../navigation/types';
+import { ChatHistoryProvider } from './hooks/ChatHistoryContext';
+import WelcomeScreen from './components/ui/WelcomeScreen';
+import HomeScreen from './components/ui/HomeScreen';
+import ChatHistoryScreen from './components/ui/ChatHistoryScreen';
+import { THEME } from './constants/Colors';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { RootStackParamList } from './navigation/types';
+import useCustomFonts from './hooks/useFonts';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -23,9 +24,39 @@ const styles = StyleSheet.create({
     minHeight: 50,
     textAlignVertical: 'center',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: THEME.BLACK,
+  },
 });
 
 export default function App() {
+  const { fontsLoaded } = useCustomFonts();
+  
+  // Set a timeout to continue regardless of font loading after 5 seconds
+  const [fontLoadTimeout, setFontLoadTimeout] = React.useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!fontsLoaded) {
+        console.log('Font loading timed out, continuing with app startup');
+        setFontLoadTimeout(true);
+      }
+    }, 5000);
+    
+    return () => clearTimeout(timer);
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded && !fontLoadTimeout) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={THEME.PURPLE} />
+      </View>
+    );
+  }
+
   return (
     <ChatHistoryProvider>
       <NavigationContainer>

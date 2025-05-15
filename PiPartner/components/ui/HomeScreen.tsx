@@ -12,15 +12,15 @@ import {
   KeyboardAvoidingView,
   Alert,
   Dimensions,
+  Modal,
 } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { useChatHistory } from '../../hooks/ChatHistoryContext';
 import { StackNavigationProp } from '@react-navigation/stack';
-import MathJaxRenderer from ''; //implement
+import MathJaxRenderer from '../../app/(tabs)/MathJaxRenderer'; //implement
 import { Ionicons } from '@expo/vector-icons';
 import { THEME } from '../../constants/Colors';
-import Modal from 'react-native-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../../navigation/types'; 
 
@@ -174,6 +174,6 @@ const styles = StyleSheet.create({
 
     },
     loadingContainer: {
-        
+
     }
 });
