@@ -9,7 +9,6 @@ import ChatHistoryScreen from './components/ui/ChatHistoryScreen';
 import { THEME } from './constants/Colors';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { RootStackParamList } from './navigation/types';
-import useCustomFonts from './hooks/useFonts';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -33,29 +32,9 @@ const styles = StyleSheet.create({
 });
 
 export default function App() {
-  const { fontsLoaded } = useCustomFonts();
   
   // Set a timeout to continue regardless of font loading after 5 seconds
   const [fontLoadTimeout, setFontLoadTimeout] = React.useState(false);
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!fontsLoaded) {
-        console.log('Font loading timed out, continuing with app startup');
-        setFontLoadTimeout(true);
-      }
-    }, 5000);
-    
-    return () => clearTimeout(timer);
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded && !fontLoadTimeout) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={THEME.PURPLE} />
-      </View>
-    );
-  }
 
   return (
     <ChatHistoryProvider>

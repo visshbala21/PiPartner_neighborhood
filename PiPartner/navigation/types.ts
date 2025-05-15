@@ -4,7 +4,7 @@ export type RootStackParamList = {
         problem?: string;
         image: string | null;
         explanation?: string;
-        isFromHistory ?: boolean;
+        isFromHistory?: boolean;
     };
     ChatHistory: undefined;
 };
