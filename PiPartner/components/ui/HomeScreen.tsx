@@ -33,7 +33,7 @@ interface HomeScreenProps {
 }
 
 interface ConversationContext {
-    originalProblm: {
+    originalProblem: {
         text: string;
         image?: string;
     }
@@ -61,17 +61,52 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
             try { 
                 const savedContext = await AsyncStorage.getItem('conversationContext');
                 if (savedContext) {
-                    console.log("loading saved convesation context");
+                    console.log("loading saved conversation context");
                     setConversationContext(JSON.parse(savedContext))
                 }
             }catch (error) {
                 console.log('failed to load conversation context: ', error)
+            Alert.alert('Error', 'Failed to load previous conversation');
             }
         };
 
         loadConversationContext();
     }, []);
 
+    const saveConversationContext = async (context: ConversationContext) => {
+        try {
+            const contextString = JSON.stringify(context);
+            await AsyncStorage.setItem('conversationContext', contextString);
+            console.log('saved conversation context');
+        } catch (error) {
+            console.log('failed to save conversation context: ', error)
+            Alert.alert('Error', 'Failed to save conversation');
+        }
+    };
+
+    const clearConversationContext = async () => {
+        try {
+            await AsyncStorage.removeItem('conversationContext');
+            setConversationContext(null);
+            console.log('cleared conversation context');
+        } catch (error) {
+            console.log('failed to clear conversation context: ', error)
+            Alert.alert('Error', 'Failed to clear conversation');
+        }
+    };
+
+    const establishConversationContext = async (problemText: string, problemImage: string | undefined, responseText: string) => {
+        const newContext: ConversationContext = {
+            originalProblem: {
+                text: problemText,
+                image: problemImage,
+            },
+            previousResponse: responseText,
+        };
+
+        console.log('establishing conversation context', newContext);
+        await setConversationContext(newContext);
+    };
 
     return (
        <KeyboardAvoidingView
@@ -91,13 +126,13 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
                 contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
             >
                 {problem && !selectedImage ? (
-                    <View style={styles.imagePreiewContainer}>
+                    <View style={styles.imagePreviewContainer}>
                         <Text style={styles.problem}>Problem: {problem}</Text>
                     </View>
                 ): null}
 
                 {selectedImage ? (
-                    <View style={styles.imagePreiewContainer}>
+                    <View style={styles.imagePreviewContainer}>
                         <Image 
                             source={{ uri: `data:image/jpeg;base64,${selectedImage}` }}
                             style={styles.imagePreview}
@@ -127,7 +162,6 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
                     </View>
                 )}
             </ScrollView>
-
         </KeyboardAvoidingView>
     );
 }
@@ -155,7 +189,7 @@ const styles = StyleSheet.create({
     scrollView: {
 
     },
-    imagePreiewContainer: {
+    imagePreviewContainer: {
 
     },
     problem: {

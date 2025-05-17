@@ -50,6 +50,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
 
     const handleSubmit = () => {
         // Allow submission if either query text or an image is present
+        // This basically sends the problem to the HomeScreen, and we will code the part where the problem is sent to the AI model in the HomeScreen.
         if (query.trim() || selectedImage) {
           navigation.navigate('Home', { 
             problem: query, 
@@ -57,12 +58,13 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
           });
         }
       };
+
     const handleImageUpload = async () => {
         try {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
             if (status !== 'granted') {
-                Alert.alert('Permission needed', 'Please grand cameral roll permissions to upload an image');
+                Alert.alert('Permission needed', 'Please grant camera roll permissions to upload an image');
                 return;
             }
 
@@ -77,7 +79,7 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
             if (!result.canceled && result.assets && result.assets[0].base64) {
                 setSelectedImage(result.assets[0].base64);
                 setProblem('');
-                Alert.alert('Sucess', 'Image uploaded sucessfully! tap to submit to continue. ');
+                Alert.alert('Success', 'Image uploaded successfully! Tap submit to continue.');
             }
         } catch (error) {
             console.error('Error uploading image:', error);
@@ -153,15 +155,11 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                           </TouchableOpacity>
                         )}
 
-                    <TouchableOpacity
-                        style={[styles.button, styles.sendButton]}
-                        onPress={() => {
-                            if (query.trim() || selectedImage) {
-                                handleSubmit();
-                            }
-                        }}
-                        disabled={!query.trim() && !selectedImage}
-                    >
+                            <TouchableOpacity
+                                style={[styles.button, styles.sendButton]}
+                            onPress={handleSubmit}
+                                disabled={!query.trim() && !selectedImage}
+                            >
                         <Ionicons name="arrow-forward" size={28} color={(query.trim() || selectedImage) ? THEME.PURPLE : '#555'} />
                     </TouchableOpacity>
                 </View>
