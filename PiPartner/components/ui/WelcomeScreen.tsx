@@ -19,8 +19,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 import { RootStackParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
-import TestIcons from './TestIcons';
-import IconDebug from './IconDebug';
 
 type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Welcome'>
 
@@ -113,10 +111,6 @@ export default function WelcomeScreen({navigation}: WelcomeScreenProps) {
                 {/*Title*/}
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>What can I help with?</Text>
-                    
-                    {/* Add the test icons component */}
-                    <TestIcons />
-                    <IconDebug />
                 </View>
 
                 {/*Search Input*/}
