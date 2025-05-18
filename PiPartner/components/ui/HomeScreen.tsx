@@ -108,6 +108,132 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
         await setConversationContext(newContext);
     };
 
+    useEffect(() => {
+        const processParams = async () => {
+            try {
+                if (route.params?.image) {
+                    setSelectedImage(route.params.image);
+                }
+                if (route.params?.problem) {
+                    setProblem(route.params.problem);
+                }
+                if (route.params?.explanation && route.params?.isFromHistory) {
+                    setResponse(route.params.explanation);
+
+                    establishConversationContext(
+                        route.params.problem || "[Image Input", 
+                        route.params.image, 
+                        route.params.explanation
+                    );
+
+                    return;
+                }
+
+                if ((route.params?.image || (route.params?.problem && route.params.problem.trim())) &&
+                    !route.params?.explanation) {
+                    console.log('about to submit with image:', !!route.params?.image);
+                    setIsLoading(true);
+                    setResponse('');
+
+                    //determine if this is a follow-up quewstion
+                    const isFollowUpQuestion = conversationContext !== null;
+                    console.log('Is follow up question:', isFollowUpQuestion);
+
+                    //prepare request body with proper input type 
+                    let requestBody: any = {
+                        //if the inout type is image set the input type to image, or otherwise text
+                        input_type: route.params?.image ? 'image' : 'text',
+                        problem: route.params?.problem || '',
+                    };
+
+                    //if the input type is image, change the request body to include the image data
+                    if (route.params?.image) {
+                        requestBody = {
+                            input_type: 'image',
+                            image_data: route.params.image,
+                        };
+                    }
+
+                    // add coversation context for follow up questions
+                    if (isFollowUpQuestion && conversationContext) {
+                        requestBody.context = {
+                            originalProblem: conversationContext.originalProblem,
+                            previousResponse: conversationContext.previousResponse,
+                            ifFollowUp: true,
+                        }
+                        console.log('Includiong follow up context:', requestBody.contex);
+                    }
+                    //fetch the response from the API
+                    console.log('Sending request to API with payload:', JSON.stringify(requestBody).substring(0, 200) + '...');
+
+                    const response = await fetch(
+                        'api-key',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(requestBody),
+                        }
+                    );
+
+                    //parsing through the response
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('API response:', data);
+
+                        let explanation = "";
+                        let nestedBody: any = {};
+
+                        if (typeof data === 'object' && data !== null) {
+                            if (data.body && typeof data.body === 'string') {
+                                try {
+                                    nestedBody = JSON.parse(data.body);
+                                    explanation = nestedBody.explanation;
+                                    console.log('parsed explanation:', explanation);
+                                } catch (e) {
+                                    console.log('failed to parse body:', e);
+                                    explanation = data.body;
+                                }
+                            } else {
+                                nestedBody = data;
+                                explanation = data.explanation;
+                            }
+                        }
+
+                        setResponse(explanation);
+                        setExtractedProblem(nestedBody.problem || '');
+
+                        if (explanation) {
+                            setResponseAndPrepareForFollowUp(explanation);
+                        }
+
+                        setSelectedImage(null);
+
+                        addChatHistory({
+                            problem: route.params?.image ? "[Image Input]" : (route.params?.problem || nestedBody.problem || 'N/A'),
+                            explanation: explanation,
+                            extractedText: route.params?.image ? (nestedBody.ocr_result || '') : undefined,
+                            image_data: route.params?.image || undefined,
+                            isFollowUp: false // Initial question is not a follow-up
+                          });
+
+                        } else {
+                            setResponse(`Error: ${response.status} - ${await response.text()}`);
+                        }
+                    }
+                 } catch (error) {
+                        console.log("error processing params:", error);
+                }
+                };
+
+                processParams();
+            }, [route.params]);
+
+
+
+
     return (
        <KeyboardAvoidingView
         style={styles.container}
