@@ -105,7 +105,13 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
         };
 
         console.log('establishing conversation context', newContext);
-        await setConversationContext(newContext);
+        setConversationContext(newContext);
+        // Persist so the next app launch still has access
+        await saveConversationContext(newContext);
+        // Persist so the next app launch still has access
+        await saveConversationContext(newContext);
+        // Persist so the next app launch still has access
+        await saveConversationContext(newContext);
     };
 
     useEffect(() => {
@@ -121,7 +127,7 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
                     setResponse(route.params.explanation);
 
                     establishConversationContext(
-                        route.params.problem || "[Image Input", 
+                        route.params.problem || "[Image Input]",
                         route.params.image, 
                         route.params.explanation
                     );
@@ -157,11 +163,11 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
                     // add coversation context for follow up questions
                     if (isFollowUpQuestion && conversationContext) {
                         requestBody.context = {
-                            originalProblem: conversationContext.originalProblem,
-                            previousResponse: conversationContext.previousResponse,
-                            ifFollowUp: true,
-                        }
-                        console.log('Includiong follow up context:', requestBody.contex);
+                             originalProblem: conversationContext.originalProblem,
+                             previousResponse: conversationContext.previousResponse,
+                            isFollowUp: true,
+                         }
+                        console.log('Including follow-up context:', requestBody.context);
                     }
                     //fetch the response from the API
                     console.log('Sending request to API with payload:', JSON.stringify(requestBody).substring(0, 200) + '...');
