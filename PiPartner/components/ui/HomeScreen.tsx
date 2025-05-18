@@ -108,10 +108,6 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
         setConversationContext(newContext);
         // Persist so the next app launch still has access
         await saveConversationContext(newContext);
-        // Persist so the next app launch still has access
-        await saveConversationContext(newContext);
-        // Persist so the next app launch still has access
-        await saveConversationContext(newContext);
     };
 
     useEffect(() => {
